@@ -1,0 +1,382 @@
+<div
+    class="product-overview__head"
+    id="product-group-category-overview"
+>
+    <div class="product-overview__text-wrapper">
+        <div class="product-overview__headline">{{ content.productOverviewHeadline }}</div>
+        <div class="product-overview__lead">{{ content.productOverviewLead }}</div>
+    </div>
+    <div class="product-overview__image-wrapper">
+        {{ img(content.productOverviewImage.one(), 500, null, 1.2, '') }}
+    </div>
+</div>
+
+{% set applicationType = applicationType ?? '0' %}
+{% set regionHandle = regionHandle ?? '0' %}
+
+{% set productGroups = content.children.all() %}
+{% set productCategories = [] %}
+{% set applicationIds = [] %}
+{% set regionIds = [] %}
+
+<div id="product-groups">
+    {% for productGroup in productGroups %}
+        {% set productGroupData = [] %}
+        {% set productData = [] %}
+        {% set groupHandle = productGroup.type.handle %}
+
+        {% if groupHandle == 'productGroup' %}
+            {% set groupItems = productGroup.products %}
+            {% elseif groupHandle == 'accessoryGroup' %}
+            {% set groupItems = productGroup.accessories %}
+            {% elseif groupHandle == 'controlGroup' %}
+            {% set groupItems = productGroup.controls %}
+        {% endif %}
+
+        {% if applicationType == '0' and regionHandle == '0' %}
+            {% set products = groupItems.all() %}
+
+            {% elseif regionHandle == '0' %}
+            {% set applicationTypeEntry = craft.entries().id(applicationType) %}
+            {%
+                set products = groupItems.relatedTo({
+                targetElement: applicationTypeEntry.one(),
+                field: 'applicationTypeEntries'
+                }).all()
+            %}
+
+            {% elseif applicationType == '0' %}
+            {% set regionsEntry = craft.entries().id(regionHandle) %}
+            {%
+                set products = groupItems.relatedTo({
+                targetElement: regionsEntry.one(),
+                field: 'regions'
+                }).all()
+            %}
+
+        {% else %}
+            {% set applicationTypeEntry = craft.entries().id(applicationType) %}
+            {% set regionsEntry = craft.entries().id(regionHandle) %}
+            {%
+                set products = groupItems.relatedTo([
+                'and',
+                {
+                targetElement: regionsEntry.one(),
+                field: 'regions'
+                },
+                {
+                targetElement: applicationTypeEntry.one(),
+                field: 'applicationTypeEntries'
+                }
+                ]).all()
+            %}
+        {% endif %}
+
+        {% for product in products %}
+            {% set availableRegions = [] %}
+
+            {% for region in product.regions %}
+                {%
+                    set availableRegions = availableRegions|merge([
+                    region.title
+                    ])
+                %}
+            {% endfor %}
+
+            {% if groupHandle == 'productGroup' %}
+                {%
+                    set productData = productData|merge([{
+                    url: product.uri,
+                    image: product.teaserimage.one(),
+                    teaserName: product.productTeaserName,
+                    teaserDescription: product.productTeaserDescription,
+                    availableRegions: availableRegions
+                    }])
+                %}
+
+                {% elseif groupHandle == 'accessoryGroup' %}
+                {%
+                    set productData = productData|merge([{
+                    url: product.uri,
+                    image: product.accessoriesTeaserImage.one(),
+                    teaserName: product.accessoriesTeaserTitle,
+                    teaserDescription: product.accessoriesTeaserLead,
+                    availableRegions: availableRegions
+                    }])
+                %}
+
+                {% elseif groupHandle == 'controlGroup' %}
+                {%
+                    set productData = productData|merge([{
+                    url: product.uri,
+                    image: product.controlsTeaserImage.one(),
+                    teaserName: product.controlesTeaserTitle,
+                    teaserDescription: product.controlsTeaserLead,
+                    availableRegions: availableRegions
+                    }])
+                %}
+            {% endif %}
+        {% endfor %}
+
+        {% if groupHandle == 'productGroup' %}
+            {% set allProducts = productGroup.products %}
+            {% elseif groupHandle == 'accessoryGroup' %}
+            {% set allProducts = productGroup.accessories %}
+            {% elseif groupHandle == 'controlGroup' %}
+            {% set allProducts = productGroup.controls %}
+        {% endif %}
+
+        {% for product in allProducts.all() %}
+            {% for application in product.applicationTypeEntries %}
+                {% if application.id not in applicationIds %}
+                    {%
+                        set applicationIds = applicationIds|merge([
+                        application.id
+                        ])
+                    %}
+                {% endif %}
+            {% endfor %}
+
+            {% for region in product.regions.all() %}
+                {% if region.id not in regionIds %}
+                    {%
+                        set regionIds = regionIds|merge([
+                        region.id
+                        ])
+                    %}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+
+        {% if groupHandle == 'productGroup' %}
+            {%
+                set productGroupData = productGroupData|merge([{
+                categoryTitle: productGroup.productCategory.one().title,
+                groupTitle: productGroup.productGroupTitle,
+                groupLead: productGroup.productGroupLead,
+                products: productData
+                }])
+            %}
+
+            {% elseif groupHandle == 'accessoryGroup' %}
+            {%
+                set productGroupData = productGroupData|merge([{
+                categoryTitle: productGroup.accessoryCategory.one().title,
+                groupTitle: productGroup.accessoriesGroupTitle,
+                groupLead: productGroup.accessoriesGroupLead,
+                products: productData
+                }])
+            %}
+
+            {% elseif groupHandle == 'controlGroup' %}
+            {%
+                set productGroupData = productGroupData|merge([{
+                categoryTitle: productGroup.controlCategory.one().title,
+                groupTitle: productGroup.controlsGroupTitle,
+                groupLead: productGroup.controlsGroupLead,
+                products: productData
+                }])
+            %}
+        {% endif %}
+
+        {% if productGroupData|first.products|length > 0 %}
+            {%
+                include '_components/sprig/product-group.twig' with {
+                content: productGroupData
+                }
+            %}
+        {% endif %}
+    {% endfor %}
+</div>
+
+<div class="navigation-snackbar">
+    {% set applicationEntry = craft.entries().id(applicationType) %}
+    {% if applicationEntry.one() is not null %}
+        {% set applicationTitle = applicationEntry.one().title %}
+    {% else %}
+        {% set applicationTitle = '0' %}
+    {% endif %}
+
+    {% set regionEntry = craft.entries().id(regionHandle) %}
+    {% if regionEntry.one() is not null %}
+        {% set regionTitle = regionEntry.one().title %}
+    {% else %}
+        {% set regionTitle = '0' %}
+    {% endif %}
+
+    <div class="navigation-snackbar__content {{ sprig.isInclude ? 'navigation-snackbar__content--hidden' }}">
+        <button
+            class="navigation-snackbar__dropdown-button"
+            data-title-identifier="overview"
+            id="overview-anchor-button"
+            onclick="scrollToOverview()"
+        >
+            <span class="navigation-snackbar__icon-overview icon-overview"></span>
+            <span class="navigation-snackbar__label-overview">Overview</span>
+        </button>
+
+        <button
+            class="navigation-snackbar__dropdown-button {{ applicationType != '0' ? 'navigation-snackbar__dropdown-button--active' }}"
+            id="application-dropdown-button"
+            onclick="toggleApplicationsDropdown()"
+        >
+            <div>
+                <span class="navigation-snackbar__icon-applications icon-filter"></span>
+                <span class="navigation-snackbar__label-applications">{{ 'Applications' | t }}</span>
+                <span
+                    id="applications-icon"
+                    class="icon-arrow-down"
+                ></span>
+            </div>
+            {% if applicationType != '0' %}
+                <span class="navigation-snackbar__selected-label">{{ applicationTitle }}</span>
+            {% endif %}
+        </button>
+        <div
+            class="navigation-snackbar__dropdown-content-wrapper"
+            id="applications-dropdown-content"
+        >
+            <div class="navigation-snackbar__dropdown-content">
+                <ul class="navigation-snackbar__dropdown-list">
+                    <li class="navigation-snackbar__dropdown-list-item">
+                        <input
+                            sprig
+                            s-trigger="change"
+                            s-val:regionHandle="{{ regionHandle }}"
+                            s-val:applicationType="0"
+                            s-push-url="?applicationType=0&regionHandle={{ regionHandle }}"
+                            value="0"
+                            type="checkbox"
+                            name="application"
+                            id="filter-all"
+                            class="navigation-snackbar__input"
+                            {{ applicationType == '0' ? 'checked' }}
+                        >
+                        <label
+                            for="filter-all"
+                            class="navigation-snackbar__label {{ applicationType == '0' ? 'navigation-snackbar__label--active' }}"
+                        >
+                            {{ 'All' | t }}
+                        </label>
+                    </li>
+                    {% for applicationId in applicationIds %}
+                        {% set applicationEntry = craft.entries().id(applicationId) %}
+                        {% set application = applicationEntry.one().title %}
+                        <li class="navigation-snackbar__dropdown-list-item">
+                            <input
+                                sprig
+                                s-trigger="change"
+                                s-val:regionHandle="{{ regionHandle }}"
+                                s-val:applicationType="{{ applicationId }}"
+                                s-push-url="?applicationType={{ applicationId }}&regionHandle={{ regionHandle }}"
+                                value="applicationId"
+                                type="checkbox"
+                                name="application"
+                                id="filter-application-{{ loop.index }}"
+                                class="navigation-snackbar__input"
+                                {{ applicationId == applicationType ? 'checked' }}
+                            >
+                            <label
+                                for="filter-application-{{ loop.index }}"
+                                class="navigation-snackbar__label {{ applicationId == applicationType ? 'navigation-snackbar__label--active' }}"
+                            >
+                                {{ application }}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        {% if currentSite.handle == 'global' %}
+            <button
+                class="navigation-snackbar__dropdown-button {{ regionHandle != '0' ? 'navigation-snackbar__dropdown-button--active' }}"
+                id="regions-dropdown-button"
+                onclick="toggleRegionsDropdown()"
+            >
+                <div>
+                    <span class="navigation-snackbar__icon-regions icon-language"></span>
+                    <span class="navigation-snackbar__label-regions">{{ 'Region' | t }}</span>
+                    <span
+                        id="regions-icon"
+                        class="icon-arrow-down"
+                    ></span>
+                </div>
+                {% if regionHandle != '0' %}
+                    <span class="navigation-snackbar__selected-label">{{ regionTitle }}</span>
+                {% endif %}
+            </button>
+            <div
+                class="navigation-snackbar__dropdown-content-wrapper"
+                id="regions-dropdown-content"
+            >
+                <div class="navigation-snackbar__dropdown-content">
+                    <ul class="navigation-snackbar__dropdown-list">
+                        <li class="navigation-snackbar__dropdown-list-item">
+                            <input
+                                sprig
+                                s-trigger="change"
+                                s-val:regionHandle="0"
+                                s-val:applicationType="{{ applicationType }}"
+                                s-push-url="?applicationType={{ applicationType }}&regionHandle=0"
+                                value="0"
+                                type="checkbox"
+                                name="region"
+                                id="filter-global"
+                                class="navigation-snackbar__input"
+                                {{ regionHandle == '0' ? 'checked' }}
+                            >
+                            <label
+                                for="filter-global"
+                                class="navigation-snackbar__label {{ regionHandle == '0' ? 'navigation-snackbar__label--active' }}"
+                            >
+                                {{ 'Global' | t }}
+                            </label>
+                        </li>
+                        {% for regionId in regionIds %}
+                            {% set regionEntry = craft.entries().id(regionId) %}
+                            {% set region = regionEntry.one().title %}
+                            <li class="navigation-snackbar__dropdown-list-item">
+                                <input
+                                    sprig
+                                    s-trigger="change"
+                                    s-val:regionHandle="{{ regionId }}"
+                                    s-val:applicationType="{{ applicationType }}"
+                                    s-push-url="?applicationType={{ applicationType }}&regionHandle={{ regionId }}"
+                                    value="{{ regionId }}"
+                                    type="checkbox"
+                                    name="region"
+                                    id="filter-region-{{ loop.index }}"
+                                    class="navigation-snackbar__input"
+                                    {{ regionId == regionHandle ? 'checked' }}
+                                >
+                                <label
+                                    for="filter-region-{{ loop.index }}"
+                                    class="navigation-snackbar__label {{ regionId == regionHandle ? 'navigation-snackbar__label--active' }}"
+                                >
+                                    {{ region }}
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+
+        {% set languageSites = craft.entries({section: 'languageDropdown', with: ['contactPage']}).one() %}
+        {% if languageSites.contactPage %}
+            {% set contactPage = languageSites.contactPage.one() %}
+            {% if contactPage %}
+                <button
+                    class="navigation-snackbar__dropdown-button"
+                    id="contact-button"
+                    type="button"
+                    onclick="window.location.href='{{ siteUrl(contactPage.url) }}'"
+                >
+                    <span class="navigation-snackbar__icon-contact icon-person"></span>
+                    <span class="navigation-snackbar__label-contact">{{ 'Contact' | t }}</span>
+                </button>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
