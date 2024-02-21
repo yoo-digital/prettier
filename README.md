@@ -10,6 +10,27 @@ The goal of this repository is to improve the developer experience @ YOO, by off
 ## Motivation
 Every developer can and should contribute to this repository. It should be in everyone's interest to improve the developer experience @ YOO. Amendments or changes can be introduced in our monthly guild meetings.
 
+## Using the Configuration
+Reference the configuration in your package.json:
+
+```json
+{
+  "prettier": "@yoo-digital/prettier"
+}
+```
+
+## Extending the Configuration
+If needed, you can override the configuration with any necessary project-specific overrides:
+
+```ts
+import prettierConfig from '@yoo-digital/prettier';
+
+export default {
+  ...prettierConfig,
+  // overrides
+};
+```
+
 ## Features
 The configuration contains a set of plugins:
 
