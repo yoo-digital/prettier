@@ -23,12 +23,33 @@ Reference the configuration in your package.json:
 If needed, you can override the configuration with any necessary project-specific overrides:
 
 ```ts
+// .prettierrc.mjs, .prettierrc.js
 import prettierConfig from '@yoo-digital/prettier';
 
 export default {
   ...prettierConfig,
   // overrides
 };
+```
+
+Alternatively you can simply define `.prettierrc` or `.prettierrc.json` containing:
+
+```json
+"@yoo-digital/prettier"
+```
+
+For a complete overview of configuration options please refer to the [official documentation](https://prettier.io/docs/en/configuration).
+
+## Ignoring files
+Make sure to define a `.prettierignore` file at the root of your project, to ignore files to be formatted:
+
+```
+.next
+assets
+build
+dist
+lib
+public
 ```
 
 ## Features
