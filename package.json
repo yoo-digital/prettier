@@ -1,6 +1,6 @@
 {
   "name": "@yoo-digital/prettier",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Reusable prettier configuration for projects within YOO AG",
   "main": "index.js",
   "repository": "git@github.com:yoo-digital/prettier.git",
