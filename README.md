@@ -32,8 +32,9 @@ export default {
 };
 ```
 
+Alternatively you can simply define `.prettierrc` or `.prettierrc.json` containing:
+
 ```json
-// .prettierrc, .prettierrc.json
 "@yoo-digital/prettier"
 ```
 
