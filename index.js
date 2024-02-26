@@ -4,10 +4,14 @@ module.exports = {
     '@prettier/plugin-php',
     '@destination/prettier-plugin-twig',
     'prettier-plugin-organize-imports',
-    'prettier-plugin-css-order'
+    'prettier-plugin-css-order',
   ],
+
+  // prettier options
   singleQuote: true,
   singleAttributePerLine: true,
+
+  // prettier-plugin-organize-attributes options
   attributeGroups: [
     '$ANGULAR_STRUCTURAL_DIRECTIVE',
     '$ANGULAR_ELEMENT_REF',
@@ -15,30 +19,36 @@ module.exports = {
     '$DEFAULT',
     '$ANGULAR_INPUT',
     '$ANGULAR_TWO_WAY_BINDING',
-    '$ANGULAR_OUTPUT'
+    '$ANGULAR_OUTPUT',
   ],
+
+  // plugin-php options
   braceStyle: '1tbs',
+
+  // prettier-plugin-css-order options
+  cssDeclarationSorterOrder: 'smacss',
+
   overrides: [
     {
       files: ['**/*.scss', '**/*.css'],
       options: {
         singleQuote: false,
-        printWidth: 100
-      }
+        printWidth: 100,
+      },
     },
     {
       files: ['**/*.html'],
       options: {
         singleQuote: false,
-        printWidth: 120
-      }
+        printWidth: 120,
+      },
     },
     {
       files: ['**/*.twig'],
       options: {
         singleQuote: false,
-        tabWidth: 4
-      }
-    }
-  ]
-}
+        tabWidth: 4,
+      },
+    },
+  ],
+};
