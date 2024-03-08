@@ -65,38 +65,23 @@ class ProjectExtensionTwigExtension extends AbstractExtension {
      */
     public function getFunctions(): array {
         return [
-            'compileScss' => new TwigFunction('compileScss', [
-                $this,
-                'compileScssFunction',
-            ]),
+            'compileScss' => new TwigFunction('compileScss', [$this, 'compileScssFunction']),
             'highlightedText' => new TwigFunction('highlightedText', [
                 $this,
                 'highlightedTextFunction',
             ]),
-            'storybookTableContentType' => new TwigFunction(
-                'storybookTableContentType',
-                [$this, 'storybookTableContentTypeFunction']
-            ),
-            'parseTable' => new TwigFunction('parseTable', [
+            'storybookTableContentType' => new TwigFunction('storybookTableContentType', [
                 $this,
-                'parseTableFunction',
+                'storybookTableContentTypeFunction',
             ]),
-            'getTeaserData' => new TwigFunction('getTeaserData', [
-                $this,
-                'getTeaserDataFunction',
-            ]),
+            'parseTable' => new TwigFunction('parseTable', [$this, 'parseTableFunction']),
+            'getTeaserData' => new TwigFunction('getTeaserData', [$this, 'getTeaserDataFunction']),
             'getSearchCategory' => new TwigFunction('getSearchCategory', [
                 $this,
                 'getSearchCategoryFunction',
             ]),
-            'getSearchText' => new TwigFunction('getSearchText', [
-                $this,
-                'getSearchTextFunction',
-            ]),
-            'getSecond' => new TwigFunction('getSecond', [
-                $this,
-                'getSecondFunction',
-            ]),
+            'getSearchText' => new TwigFunction('getSearchText', [$this, 'getSearchTextFunction']),
+            'getSecond' => new TwigFunction('getSecond', [$this, 'getSecondFunction']),
             'getBreadcrumbTitle' => new TwigFunction('getBreadcrumbTitle', [
                 $this,
                 'getBreadcrumbTitleFunction',
@@ -255,9 +240,7 @@ class ProjectExtensionTwigExtension extends AbstractExtension {
                 $teaser['eyebrow'] = $entry->accessoriesOverviewTeaserEyebrow;
                 $teaser['title'] = $entry->accessoriesOverviewTeaserTitle;
                 $teaser['lead'] = $entry->accessoriesOverviewTeaserLead;
-                $teaser[
-                    'image'
-                ] = $entry->accessoriesOverviewTeaserImage->one();
+                $teaser['image'] = $entry->accessoriesOverviewTeaserImage->one();
                 break;
             case 'sparePartsOverview':
                 $teaser['url'] = $entry->url;
@@ -292,9 +275,7 @@ class ProjectExtensionTwigExtension extends AbstractExtension {
                 $teaser['eyebrow'] = $entry->sustainabilityStoriesTeaserEyebrow;
                 $teaser['title'] = $entry->sustainabilityStoriesTeaserTitle;
                 $teaser['lead'] = $entry->sustainabilityStoriesTeaserLead;
-                $teaser[
-                    'image'
-                ] = $entry->sustainabilityStoriesTeaserImage->one();
+                $teaser['image'] = $entry->sustainabilityStoriesTeaserImage->one();
                 break;
             case 'expertArticle':
                 $teaser['url'] = $entry->url;
@@ -348,17 +329,12 @@ class ProjectExtensionTwigExtension extends AbstractExtension {
      * @param $value string|array
      * @return string
      */
-    public function storybookTableContentTypeFunction(
-        string $type,
-        string|array $value
-    ): string {
+    public function storybookTableContentTypeFunction(string $type, string|array $value): string {
         return match ($type) {
             'boolean' => $value ? 'true' : 'false',
             'string' => $value,
             'redactor' => '--- Redactor Content ---',
-            'object' => is_array($value)
-                ? '{' . $this->convert_multi_array($value) . '}'
-                : $value,
+            'object' => is_array($value) ? '{' . $this->convert_multi_array($value) . '}' : $value,
             'entry' => '--- Single Entry ---',
             'entries' => '--- Array of Entries ---',
             'asset' => '--- Single Asset ---',
@@ -391,8 +367,6 @@ class ProjectExtensionTwigExtension extends AbstractExtension {
      * @return string
      */
     function compileScssFunction(string $scss): string {
-        return ProjectExtension::$plugin->projectExtensionService->compileScss(
-            $scss
-        );
+        return ProjectExtension::$plugin->projectExtensionService->compileScss($scss);
     }
 }
