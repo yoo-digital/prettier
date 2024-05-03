@@ -3,7 +3,7 @@ module.exports = {
     'prettier-plugin-organize-attributes',
     '@prettier/plugin-php',
     '@afshinhaghighat/prettier-plugin-twig-melody',
-    'prettier-plugin-organize-imports',
+    '@trivago/prettier-plugin-sort-imports',
     'prettier-plugin-css-order',
   ],
 
@@ -27,6 +27,10 @@ module.exports = {
 
   // prettier-plugin-css-order options
   cssDeclarationSorterOrder: 'smacss',
+
+  // prettier-plugin-sort-imports options
+  importOrder: ['^@', '^[a-zA-Z]', '^[./].*(?<!\\.s?css)$', '\\.s?css$'],
+  importOrderParserPlugins: ['decorators', 'jsx', 'typescript'],
 
   overrides: [
     {
