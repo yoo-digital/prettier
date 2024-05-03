@@ -30,6 +30,8 @@ Reference the configuration in your package.json:
 }
 ```
 
+**Note**: After updating the configuration, restart your IDE in order to enable the latest changes.
+
 ## Extending the Configuration
 
 If needed, you can override the configuration with any necessary project-specific overrides:
