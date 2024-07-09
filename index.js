@@ -2,7 +2,6 @@ module.exports = {
   plugins: [
     'prettier-plugin-organize-attributes',
     '@prettier/plugin-php',
-    '@afshinhaghighat/prettier-plugin-twig-melody',
     '@trivago/prettier-plugin-sort-imports',
     'prettier-plugin-css-order',
   ],
@@ -44,14 +43,6 @@ module.exports = {
       files: ['**/*.html'],
       options: {
         singleQuote: false,
-        printWidth: 120,
-      },
-    },
-    {
-      files: ['**/*.twig'],
-      options: {
-        singleQuote: false,
-        tabWidth: 4,
         printWidth: 120,
       },
     },
