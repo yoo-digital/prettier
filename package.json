@@ -1,6 +1,6 @@
 {
   "name": "@yoo-digital/prettier",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Reusable prettier configuration for projects within YOO AG",
   "main": "index.js",
   "repository": "git@github.com:yoo-digital/prettier.git",
@@ -26,6 +26,6 @@
     "@trivago/prettier-plugin-sort-imports": "^4.3.0"
   },
   "peerDependencies": {
-    "prettier": "~3.2.5"
+    "prettier": "^3"
   }
 }
