@@ -1,4 +1,7 @@
 # YOO Prettier
+¨¨
+> ⚠️ This repository together with others has been merged into the [yoo-digital/config monorepo](https://github.com/yoo-digital/config).
+> You can find the @yoo-digital/prettier package under this [URL](https://github.com/yoo-digital/config/tree/main/packages/prettier).
 
 _This repo contains a reusable prettier configuration for projects @ YOO._
 
